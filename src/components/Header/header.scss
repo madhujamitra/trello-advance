@@ -1,0 +1,17 @@
+@use '../../styles/partials/variables' as *;
+@use '../../styles/partials/mixins' as *;
+@use '../../styles/partials/global' as *;
+
+
+.Header {
+  &__content {
+    display: flex;
+    gap: 80%;
+    align-items: center;
+    justify-content: space-around;
+   
+  }
+  &__background{
+    background-color: $yellow; 
+  }
+}
