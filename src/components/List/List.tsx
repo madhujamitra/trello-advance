@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Task from "../Task/task";
 
 interface TaskObject {
@@ -8,22 +8,24 @@ interface TaskObject {
 interface HeadingObject {
   value: string;
 }
-interface ListIdObject{
+interface ListIdObject {
   listId: string;
 }
 
+
 interface ListProps {
+  id: ListIdObject;
   heading: HeadingObject;
   tasks: TaskObject[];
 }
-const List = ({listId}:ListIdObject) => {
-
-  console.log(listId);
+const List = (props:any) => {
+  const listID = props.listId;
+  const listValue = props.listValue;
   const [listData, setListData] = useState<ListProps>({
+    id: { listId: listID },
     heading: { value: "" },
     tasks: [],
   });
-
 
   const [inputValue, setInputValue] = useState("");
   const [showStore, setShowStore] = useState(true);
@@ -38,7 +40,6 @@ const List = ({listId}:ListIdObject) => {
       ...prevListData,
       heading: { value: inputValue },
     }));
-    console.log(listData);
     setShowStore(false);
   };
 
@@ -47,9 +48,11 @@ const List = ({listId}:ListIdObject) => {
       ...prevListData,
       tasks: [...prevListData.tasks, value],
     }));
-
-    console.log(listData);
   }
+
+  useEffect(()=>{
+    listValue(JSON.stringify(listData, null, 2));
+  },[listData])
   return (
     <>
       <div
