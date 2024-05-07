@@ -1,58 +1,39 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Task from "../Task/task";
 
 interface TaskObject {
   id: string;
   value: string;
 }
-interface HeadingObject {
-  value: string;
-}
-interface ListIdObject {
-  listId: string;
-}
-
 
 interface ListProps {
-  id: ListIdObject;
-  heading: HeadingObject;
+  listId: string;
+  heading: string;
   tasks: TaskObject[];
+  updateHeading: (listId: string, heading: string) => void;
+  addTaskToList: (listId: string, taskId: string, taskValue: string) => void;
 }
-const List = (props:any) => {
-  const listID = props.listId;
-  const listValue = props.listValue;
-  const [listData, setListData] = useState<ListProps>({
-    id: { listId: listID },
-    heading: { value: "" },
-    tasks: [],
-  });
 
+const List = ({
+  listId,
+  heading,
+  tasks,
+  updateHeading,
+  addTaskToList,
+}: ListProps) => {
   const [inputValue, setInputValue] = useState("");
-  const [showStore, setShowStore] = useState(true);
-
-  function headingUpdate(e: any) {
-    setInputValue(e.target.value);
-  }
+  const [showForm, setShowForm] = useState(true);
 
   const onSubmitHandler = (e: any) => {
     e.preventDefault();
-    setListData((prevListData) => ({
-      ...prevListData,
-      heading: { value: inputValue },
-    }));
-    setShowStore(false);
+    updateHeading(listId, inputValue); // Use action dispatcher for heading
+    setShowForm(false);
   };
 
-  function checkfunc(value: TaskObject) {
-    setListData((prevListData) => ({
-      ...prevListData,
-      tasks: [...prevListData.tasks, value],
-    }));
-  }
+  const addTask = (task: TaskObject) => {
+    addTaskToList(listId, task.id, task.value); // Use action dispatcher for tasks
+  };
 
-  useEffect(()=>{
-    listValue(JSON.stringify(listData, null, 2));
-  },[listData])
   return (
     <>
       <div
@@ -64,19 +45,19 @@ const List = (props:any) => {
         <div>
           <form
             onSubmit={onSubmitHandler}
-            style={{ display: showStore ? "block" : "none" }}
+            style={{ display: showForm ? "block" : "none" }}
           >
             <input
               style={{ display: "block" }}
               type="text"
               value={inputValue}
-              onChange={headingUpdate}
-            ></input>
-            <button type="submit">Add List name</button>
+              onChange={(e) => setInputValue(e.target.value)}
+            />
+            <button type="submit">Add List Name</button>
           </form>
-          <h2>{listData.heading.value}</h2>
+          <h2>{heading}</h2>
         </div>
-        {listData.tasks.map((task: any) => (
+        {tasks.map((task) => (
           <li
             style={{ border: "2px solid black", padding: "5px" }}
             key={task.id}
@@ -84,7 +65,7 @@ const List = (props:any) => {
             {task.value}
           </li>
         ))}
-        <Task onTaskAdd={checkfunc} />
+        <Task onTaskAdd={addTask} />
       </div>
     </>
   );
